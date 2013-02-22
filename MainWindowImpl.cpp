@@ -92,7 +92,7 @@ void MainWindowImpl::addFile(const QString &fileName, QStandardItem *root)
 
     QProcess readelf;
 
-    readelf.start("readelf", QStringList() << "-d" << QFile::encodeName(fileName));
+    readelf.start("readelf", QStringList() << "-d" << fileName);
     if(!readelf.waitForFinished())
         return;
 
