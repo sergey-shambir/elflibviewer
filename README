@@ -1,0 +1,56 @@
+Name: elflibviewer  (ELF Library Viewer)
+Author: Michael Pyne <mpyne@kde.org>
+
+Purpose: This program shows a list of libraries that a given application or library
+depends on.  This is done recursively as well, so instead of the flat list given by tools
+like ldd(1), you can tell what libraries are depended upon directly, and indirectly.
+You could use this to determine what library is causing link errors for your application,
+for instance.
+
+Requirements:
+  readelf (as found in GNU binutils)
+  Qt 4.4 (or remove the parts about setWindowFilePath in MainWindowImpl.cpp for a lower req)
+  That's it.  Keep in mind only ELF-format libraries and executables are supported.  Windows
+  uses something else, which this tool won't help with (on the other hand, there are already
+  tons of fine superior tools that do much the same thing available for Windows)
+
+Build:
+  $ tar xjf elflibviewer-0.9.tar.bz2
+  $ cd elflibviewer-0.9
+  $ mkdir build
+  $ cd build
+  $ cmake -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_INSTALL_PREFIX=/path/to/install ../
+  $ make && make install
+
+Note: You may use a different CMAKE_BUILD_TYPE if you like, obviously.
+CMAKE_INSTALL_PREFIX controls where the executable itself is installed.  The
+cross-platform xdg-utils are used to install the .desktop menu entry and the
+associated icon.  These tools will use the first writable path in XDG_DATA_DIRS
+to choose the path to install to if you are running as root, so be sure that
+the path you want the files in is first in the environment variable.  If you
+are installing as a user the xdg-utils will likely use $HOME/.local in case you
+want to uninstall later.
+
+You may run ./elflibviewer from the build directory or simply run the installed
+one later.
+
+You can open a file to view after running the program, or pass the file name on
+the command line.
+
+When the program is open, you can type into the search line to highlight
+libraries with matching names, and any other libraries depending on that one.
+
+For instance, if your app App was broke due to a missing libXfoo and the dep tree
+looked like this:
+
+App
++-libc
++-libm
++-libX11
+|+-libXfoo
+|\-libXrandr
++-libQtGui
+\-libQtCore
+
+then searching for "libXfoo" (or even just Xfoo) would highlight App, libX11, and libXfoo
+to show you the affected libraries.

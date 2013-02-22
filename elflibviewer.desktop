@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=elflibviewer -caption "%c" %i
+Icon=elflibviewer
+Comment=Shows library dependencies of ELF-based applications (such as used on Linux, BSD, Solaris)
+Name=ELF Library Viewer
+GenericName=Application Dependency Viewer
+Categories=Qt;Development;System;Utility;
