@@ -58,7 +58,7 @@ void MainWindowImpl::openFile(const QString &fileName)
 
     m_model->clear();
     QStringList list;
-    list << "Shared Object" << "Resolved Path";
+    list << tr("Shared Object") << tr("Resolved Path");
     m_model->setHorizontalHeaderLabels(list);
 
     QFileInfo fi(fileName);
@@ -77,7 +77,7 @@ void MainWindowImpl::openFile(const QString &fileName)
 
 void MainWindowImpl::on_actionOpen_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Open executable/library");
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open executable or library"));
     openFile(fileName);
 }
 
@@ -121,7 +121,7 @@ void MainWindowImpl::addFile(const QString &fileName, QStandardItem *root)
         items << new QStandardItem(soname);
 
         if(lib.isEmpty()) {
-            items << new QStandardItem("not found");
+            items << new QStandardItem(tr("not found"));
 
             QFont f = items[0]->font();
             f.setItalic(true);
@@ -184,8 +184,8 @@ void MainWindowImpl::resetItems(QStandardItem *root)
 
 void MainWindowImpl::on_actionAbout_triggered()
 {
-    QMessageBox::about(this, "About elflibviewer",
-        QString::fromUtf8("elflibviewer is a program to display the required library dependencies of"
+    QMessageBox::about(this, tr("About elflibviewer"),
+        tr("elflibviewer is a program to display the required library dependencies of"
         " a program or shared library (in ELF format).  It requires the readelf"
         " tool.\n\nCopyright © 2007, 2009 Michael Pyne.  This program may be distributed"
         " under the terms of the GNU GPL v2 (or any later version).\n\n"

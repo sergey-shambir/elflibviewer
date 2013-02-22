@@ -27,11 +27,25 @@
  *  2. App shows children only for first occurance of library
  *       -> if app depends on QtGui and QtCore, QtGui depends on QtCore,
  *          than 2 rows QtCore presented, but only one of them has children
+ *
+ * @todo Issues for some future
+ *  1. Add multidocument support (with tabs?)
+ *  2. Maybe add "open parent folder" context menu for rows
+ *  3. Maybe add column with library size
  */
 
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
+
+    QTranslator *qtTranslator = new QTranslator(qApp);
+    qtTranslator->load("qt_" + QLocale::system().name(),
+                       QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    qApp->installTranslator(qtTranslator);
+
+    QTranslator appTranslator;
+    appTranslator.load(":/i18n/translations/i18n_" + QLocale::system().name());
+    app.installTranslator(&appTranslator);
 
     MainWindowImpl mw(0);
     mw.show();

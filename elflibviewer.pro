@@ -18,3 +18,5 @@ FORMS += \
 
 RESOURCES += \
     resources.qrc
+
+TRANSLATIONS += translations/i18n_ru.ts
