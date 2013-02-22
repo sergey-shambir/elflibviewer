@@ -36,6 +36,7 @@ MainWindowImpl::MainWindowImpl(QWidget *parent) :
   QMainWindow(parent), m_ui(new Ui::MainWindow), m_model(0), d(new Private)
 {
     m_ui->setupUi(this);
+    setAcceptDrops(true);
 
     m_model = new QStandardItemModel(this);
     m_ui->libView->setModel(m_model);
@@ -295,6 +296,20 @@ QStringList MainWindowImpl::readLdConfigsByWildcard(const QString &wildcardPath)
         paths << readLdConfig(dirPath + configFile);
 
     return paths;
+}
+
+void MainWindowImpl::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (event->mimeData()->hasFormat(QLatin1String("text/plain")))
+        event->acceptProposedAction();
+}
+
+void MainWindowImpl::dropEvent(QDropEvent *event)
+{
+    QList<QUrl> urls = event->mimeData()->urls();
+    if (urls.isEmpty())
+        return;
+    openFile(urls.first().toLocalFile());
 }
 
 // vim: set ts=8 sw=4 et encoding=utf8:

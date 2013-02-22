@@ -23,8 +23,7 @@
 
 /**
  * @todo All issues in list should be closed ASAP
- *  1. Drag&drop doesn't work
- *  2. App shows children only for first occurance of library
+ *  1. App shows children only for first occurance of library
  *       -> if app depends on QtGui and QtCore, QtGui depends on QtCore,
  *          than 2 rows QtCore presented, but only one of them has children
  *
@@ -32,6 +31,7 @@
  *  1. Add multidocument support (with tabs?)
  *  2. Maybe add "open parent folder" context menu for rows
  *  3. Maybe add column with library size
+ *  4. Add warning when file is not in ELF format
  */
 
 int main(int argc, char **argv)

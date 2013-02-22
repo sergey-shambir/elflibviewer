@@ -42,23 +42,27 @@ class MainWindowImpl : public QMainWindow
 {
     Q_OBJECT
 
-    public:
+public:
     MainWindowImpl (QWidget *parent);
     void openFile(const QString &fileName);
 
-    public slots:
+public slots:
     void highlightMatchingLibraries();
     void restartTimer();
 
-    signals:
+signals:
     void quit();
 
-    protected slots:
+protected:
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
+
+protected slots:
     void on_actionQuit_triggered();
     void on_actionOpen_triggered();
     void on_actionAbout_triggered();
 
-    private:
+private:
     void addFile(const QString &fileName, QStandardItem *root);
     QString resolveLibrary(const QString &library, const LibSearchInfo &searchInfo);
     void resetItems(QStandardItem *root);
