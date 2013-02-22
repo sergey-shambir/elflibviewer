@@ -23,11 +23,8 @@
 
 /**
  * @todo All issues in list should be closed ASAP
- *  1. "include <wildcard>" in /etc/ld.so.conf not handled
- *       -> Ubuntu/Debian multiarch breaks pahts resolving
- *  2. Items in tree view are editable, but they shouldn't be
- *  3. Drag&drop doesn't work
- *  4. App shows children only for first occurance of library
+ *  1. Drag&drop doesn't work
+ *  2. App shows children only for first occurance of library
  *       -> if app depends on QtGui and QtCore, QtGui depends on QtCore,
  *          than 2 rows QtCore presented, but only one of them has children
  */

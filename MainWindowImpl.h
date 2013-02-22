@@ -65,6 +65,9 @@ class MainWindowImpl : public QMainWindow
     QStringList getBasePaths() const;
     QStringList getSystemEnvPaths() const;
 
+    QStringList readLdConfig(const QString &path) const;
+    QStringList readLdConfigsByWildcard(const QString &wildcardPath) const;
+
     Ui::MainWindow *m_ui;
     QStandardItemModel *m_model;
     LibHash m_libs;

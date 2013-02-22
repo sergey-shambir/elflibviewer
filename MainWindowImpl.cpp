@@ -39,6 +39,7 @@ MainWindowImpl::MainWindowImpl(QWidget *parent) :
 
     m_model = new QStandardItemModel(this);
     m_ui->libView->setModel(m_model);
+    m_ui->libView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     d->basePaths = getBasePaths();
     d->envPaths = getSystemEnvPaths();
@@ -219,31 +220,9 @@ void MainWindowImpl::restartTimer()
 
 QStringList MainWindowImpl::getBasePaths() const
 {
-    // Open system file defining standard library paths.
-    QFile ldConf("/etc/ld.so.conf");
-
-    if(!ldConf.open(QIODevice::ReadOnly))
-        return QStringList();
-
-    QTextStream in(&ldConf);
-    QHash<QString, bool> foundMap;
-    QStringList paths;
-
-    // Loop through each path.  Resolve it to the actual file, and if not
-    // already in the path, add it at the end.
-    while(!in.atEnd()) {
-        QString lib = in.readLine();
-        QFileInfo libInfo(lib);
-        QString realPath = libInfo.canonicalFilePath();
-
-        if(foundMap.contains(realPath))
-            continue;
-
-        foundMap[realPath] = true;
-        paths << realPath;
-    }
-
-    return paths;
+    QStringList basePaths = readLdConfig(QLatin1String("/etc/ld.so.conf"));
+    basePaths.removeDuplicates();
+    return basePaths;
 }
 
 QStringList MainWindowImpl::getSystemEnvPaths() const
@@ -257,6 +236,65 @@ QStringList MainWindowImpl::getSystemEnvPaths() const
     }
 
     return QStringList();
+}
+
+/// Reads /etc/ld.so.conf or included file
+QStringList MainWindowImpl::readLdConfig(const QString &path) const
+{
+    // Open system file defining standard library paths.
+    QFile ldConf(path);
+
+    if(!ldConf.open(QIODevice::ReadOnly))
+        return QStringList();
+
+    QTextStream in(&ldConf);
+    QStringList paths;
+
+    // Loop through each path.  Resolve it to the actual file, and if not
+    // already in the path, add it at the end.
+    while(!in.atEnd()) {
+        QString lib = in.readLine();
+        if (lib.isEmpty())
+            continue;
+        if (lib.startsWith(QLatin1String("include "))) {
+            QStringList parts = lib.split(QLatin1Char(' '), QString::SkipEmptyParts);
+            if (parts.size() > 1)
+                paths << readLdConfigsByWildcard(parts[1]);
+        } else {
+            QFileInfo libInfo(lib);
+            if (!libInfo.exists())
+                continue;
+            QString realPath = libInfo.canonicalFilePath();
+
+            paths << realPath;
+        }
+    }
+
+    return paths;
+}
+
+/// Reads all ld.so.conf-like files matching wildcard
+/// Example - /etc/ld.so.conf.d/*.conf
+QStringList MainWindowImpl::readLdConfigsByWildcard(const QString &wildcardPath) const
+{
+    int pos = wildcardPath.indexOf(QLatin1Char('*'));
+    if (pos == -1)
+        return readLdConfig(wildcardPath);
+
+    const QString dirPath = wildcardPath.left(pos);
+    const QString namesFilter = wildcardPath.right(wildcardPath.size() - pos);
+    QDir dir(dirPath);
+    if (!dir.exists())
+        return QStringList();
+
+    dir.setNameFilters(QStringList() << namesFilter);
+    QStringList files = dir.entryList(QDir::Files);
+
+    QStringList paths;
+    foreach (const QString &configFile, files)
+        paths << readLdConfig(dirPath + configFile);
+
+    return paths;
 }
 
 // vim: set ts=8 sw=4 et encoding=utf8:
