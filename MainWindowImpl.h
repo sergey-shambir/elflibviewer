@@ -19,24 +19,13 @@
 #ifndef MAINWINDOWIMPL_H
 #define MAINWINDOWIMPL_H
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 #include <QtCore/QHash>
 #include "ui_elflibviewer.h"
 
 class QStandardItem;
 class QStandardItemModel;
 class QStringList;
-
-typedef QHash<QString,QString> LibHash;
-
-struct LibSearchInfo
-{
-    // Basically if runPath is set (at all), ignore rPath and search runPath
-    // after LD_LIBRARY_PATH.  Otherwise, if rPath is set, search it before
-    // LD_LIBRARY_PATH.  Both rPath and runPath are : separated.
-    QString rPath;
-    QString runPath;
-};
 
 class MainWindowImpl : public QMainWindow
 {
@@ -63,18 +52,11 @@ protected slots:
     void on_actionAbout_triggered();
 
 private:
-    void addFile(const QString &fileName, QStandardItem *root);
-    QString resolveLibrary(const QString &library, const LibSearchInfo &searchInfo);
+    void addFile(const QString &name, QStandardItem *root);
     void resetItems(QStandardItem *root);
-    QStringList getBasePaths() const;
-    QStringList getSystemEnvPaths() const;
-
-    QStringList readLdConfig(const QString &path) const;
-    QStringList readLdConfigsByWildcard(const QString &wildcardPath) const;
 
     Ui::MainWindow *m_ui;
     QStandardItemModel *m_model;
-    LibHash m_libs;
 
     class Private;
     Private *d;

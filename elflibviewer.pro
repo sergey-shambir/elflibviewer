@@ -1,3 +1,4 @@
+
 OTHER_FILES += \
     README \
     locationbar-erase.png \
@@ -7,11 +8,13 @@ OTHER_FILES += \
     application-exit.png
 
 HEADERS += \
-    MainWindowImpl.h
+    MainWindowImpl.h \
+    LibrariesInfo.h
 
 SOURCES += \
     MainWindowImpl.cpp \
-    main.cpp
+    main.cpp \
+    LibrariesInfo.cpp
 
 FORMS += \
     elflibviewer.ui
