@@ -43,6 +43,9 @@
         <property name="toolTip">
          <string>Type a library name in here to highlight libraries that use it</string>
         </property>
+        <property name="placeholderText">
+         <string>Search...</string>
+        </property>
        </widget>
       </item>
      </layout>
@@ -68,7 +71,7 @@
      <x>0</x>
      <y>0</y>
      <width>550</width>
-     <height>24</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
