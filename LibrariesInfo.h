@@ -26,6 +26,12 @@ public:
     QStringList getLibraryChildren(const QString &name);
 
 private:
+    enum ELFClass {
+        Unknown,
+        ELF32,
+        ELF64
+    };
+
     class Lib
     {
     public:
@@ -50,10 +56,14 @@ private:
     QStringList getSystemEnvPaths() const;
     QStringList readLdConfig(const QString &path) const;
     QStringList readLdConfigsByWildcard(const QString &wildcardPath) const;
+    void splitPaths(const QStringList &all, QStringList &elf32, QStringList &elf64);
 
     QHash<QString, LibPtr> cache;
-    QStringList basePaths;
-    QStringList envPaths;
+    QStringList basePaths32;
+    QStringList envPaths32;
+    QStringList basePaths64;
+    QStringList envPaths64;
+    ELFClass elfClass;
 };
 
 #endif // LIBRARIESINFO_H

@@ -9,9 +9,10 @@
 // TODO: use bool isElf64 to split x64 and i386 library search paths on Debian/Ubuntu.
 
 LibrariesInfo::LibrariesInfo()
+    : elfClass(Unknown)
 {
-    basePaths = getBasePaths();
-    envPaths = getSystemEnvPaths();
+    splitPaths(getBasePaths(), basePaths32, basePaths64);
+    splitPaths(getSystemEnvPaths(), envPaths32, envPaths64);
 }
 
 void LibrariesInfo::loadFile(const QString &path)
@@ -23,6 +24,7 @@ void LibrariesInfo::loadFile(const QString &path)
 
 void LibrariesInfo::clear()
 {
+    elfClass = Unknown;
     cache.clear();
 }
 
@@ -54,12 +56,18 @@ QString LibrariesInfo::resolveLibraryPath(const QString &library, const LibSearc
     if(info.runPath.isEmpty() && !info.rPath.isEmpty())
         paths << info.rPath.split(":");
 
-    paths << envPaths;
+    if (elfClass == ELF64)
+        paths << envPaths64;
+    else
+        paths << envPaths32;
 
     if(!info.runPath.isEmpty())
         paths << info.runPath.split(":");
 
-    paths << basePaths;
+    if (elfClass == ELF64)
+        paths << basePaths64;
+    else
+        paths << basePaths32;
     paths << "/lib" << "/usr/lib";
 
     foreach(QString path, paths) {
@@ -90,8 +98,8 @@ void LibrariesInfo::loadFileRecursive(const QString &path, Lib &parent)
     QTextStream ts(&readelf);
     QRegExp soPat("\\[(.*)\\]$");
     QRegExp classElf64("\\s*Class\\:\\s+ELF64\\s*");
+    QRegExp classElfAny("\\s*Class\\:\\s+ELF\\w*\\s*");
     LibSearchInfo info;
-    bool isElf64 = false;
 
     // List of libraries to search for.  We cannot search as soon as its
     // encountered because we must wait until we've seen rPath and runPath.
@@ -99,14 +107,19 @@ void LibrariesInfo::loadFileRecursive(const QString &path, Lib &parent)
     while(!ts.atEnd()) {
         QString str = ts.readLine();
 
-        if (classElf64.exactMatch(str))
-            isElf64 = true;
-        else if(str.contains("(RPATH)") && soPat.indexIn(str) != -1)
+        if (elfClass == Unknown) {
+            if (classElf64.exactMatch(str))
+                elfClass = ELF64;
+            else if (classElfAny.exactMatch(str))
+                elfClass = ELF32;
+        }
+        if(str.contains("(RPATH)") && soPat.indexIn(str) != -1) {
             info.rPath = soPat.cap(1);
-        else if(str.contains("(RUNPATH)") && soPat.indexIn(str) != -1)
+        } else if(str.contains("(RUNPATH)") && soPat.indexIn(str) != -1) {
             info.runPath = soPat.cap(1);
-        else if(str.contains("(NEEDED)") && soPat.indexIn(str) != -1)
+        } else if(str.contains("(NEEDED)") && soPat.indexIn(str) != -1) {
             libs << soPat.cap(1);
+        }
     }
     parent.children = libs;
     parent.loadedChildren = true;
@@ -188,6 +201,21 @@ QStringList LibrariesInfo::readLdConfigsByWildcard(const QString &wildcardPath) 
         paths << readLdConfig(dirPath + configFile);
 
     return paths;
+}
+
+void LibrariesInfo::splitPaths(const QStringList &all, QStringList &elf32, QStringList &elf64)
+{
+    foreach (const QString &path, all)
+    {
+        if (path.contains("i386") || path.endsWith("lib32") || path.endsWith("libx32")) {
+            elf32 << path;
+        } else if (path.contains("x86_64") || path.endsWith("lib64")) {
+            elf64 << path;
+        } else {
+            elf32 << path;
+            elf64 << path;
+        }
+    }
 }
 
 QStringList LibrariesInfo::getSystemEnvPaths() const
