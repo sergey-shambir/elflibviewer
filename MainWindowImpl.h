@@ -54,6 +54,7 @@ protected slots:
 private:
     void addFile(const QString &name, QStandardItem *root);
     void resetItems(QStandardItem *root);
+    QString statusBarStats() const;
 
     Ui::MainWindow *m_ui;
     QStandardItemModel *m_model;

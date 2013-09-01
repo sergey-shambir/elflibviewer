@@ -32,6 +32,7 @@ class MainWindowImpl::Private
     QStringList envPaths;
     QTimer highlightLibrariesTimer;
     LibrariesInfo libs;
+    LibrariesStatistics stats;
 };
 
 MainWindowImpl::MainWindowImpl(QWidget *parent) :
@@ -69,11 +70,14 @@ void MainWindowImpl::openFile(const QString &fileName)
 
     m_model->invisibleRootItem()->appendRow(items);
     d->libs.loadFile(fileName);
+    d->stats = d->libs.getStatistics();
     addFile(fileName, m_model->item(0));
     d->libs.clear();
 
     m_ui->libView->expand(m_model->indexFromItem(items[0]));
     m_ui->libView->resizeColumnToContents(0);
+
+    m_ui->statusbar->showMessage(statusBarStats());
 
     setWindowFilePath(fileName);
 }
@@ -129,6 +133,25 @@ void MainWindowImpl::resetItems(QStandardItem *root)
         resetItems(root->child(i, 0));
 
     root->setForeground(Qt::black);
+}
+
+QString MainWindowImpl::statusBarStats() const
+{
+    double count = d->stats.depsCount;
+    double bytes = d->stats.depsSizeInBytes;
+    if (bytes > 1024 * 1024)
+    {
+        // We need at maximum 2 digits in the fractional part.
+        bytes = 0.01 * (qint64(bytes) * 100 / (1024 * 1024));
+        return tr("%1 dependencies with total size %2 MB.").arg(count).arg(bytes);
+    }
+    if (bytes > 1024)
+    {
+        // We need at maximum 2 digits in the fractional part.
+        bytes = 0.01 * (qint64(bytes) * 100 / 1024);
+        return tr("%1 dependencies with total size %2 KB.").arg(count).arg(bytes);
+    }
+    return tr("%1 dependencies with total size %2 bytes.").arg(count).arg(bytes);
 }
 
 void MainWindowImpl::on_actionAbout_triggered()

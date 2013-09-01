@@ -22,6 +22,21 @@ void LibrariesInfo::loadFile(const QString &path)
     loadFileRecursive(path, *executable);
 }
 
+LibrariesStatistics LibrariesInfo::getStatistics() const
+{
+    LibrariesStatistics ret;
+    ret.depsCount = cache.size();
+    ret.depsSizeInBytes = 0;
+    foreach (const QString &key, cache.keys()) {
+        LibPtr lib = cache.value(key);
+        if (!lib.isNull()) {
+            QFileInfo fi(lib->path);
+            ret.depsSizeInBytes += fi.size();
+        }
+    }
+    return ret;
+}
+
 void LibrariesInfo::clear()
 {
     elfClass = Unknown;

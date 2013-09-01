@@ -15,11 +15,18 @@ struct LibSearchInfo
     QString runPath;
 };
 
+struct LibrariesStatistics
+{
+    qint64 depsCount;
+    qint64 depsSizeInBytes;
+};
+
 class LibrariesInfo
 {
 public:
     LibrariesInfo();
     void loadFile(const QString &path);
+    LibrariesStatistics getStatistics() const;
     void clear();
 
     QString getLibraryPath(const QString &name);
