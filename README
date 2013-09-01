@@ -9,32 +9,18 @@ for instance.
 
 Requirements:
   readelf (as found in GNU binutils)
-  Qt 4.4 (or remove the parts about setWindowFilePath in MainWindowImpl.cpp for a lower req)
+  Qt 4.8
   That's it.  Keep in mind only ELF-format libraries and executables are supported.  Windows
   uses something else, which this tool won't help with (on the other hand, there are already
   tons of fine superior tools that do much the same thing available for Windows)
 
 Build:
-  $ tar xjf elflibviewer-0.9.tar.bz2
-  $ cd elflibviewer-0.9
-  $ mkdir build
-  $ cd build
-  $ cmake -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_INSTALL_PREFIX=/path/to/install ../
-  $ make && make install
+  $ git clone git@github.com:sergey-shambir/elflibviewer.git
+  $ cd elflibviewer
+  $ mkdir elflibviewer-build && cd elflibviewer-build
+  $ qmake-qt4 ../elflibviewer/elflibviewer.pro && make
 
-Note: You may use a different CMAKE_BUILD_TYPE if you like, obviously.
-CMAKE_INSTALL_PREFIX controls where the executable itself is installed.  The
-cross-platform xdg-utils are used to install the .desktop menu entry and the
-associated icon.  These tools will use the first writable path in XDG_DATA_DIRS
-to choose the path to install to if you are running as root, so be sure that
-the path you want the files in is first in the environment variable.  If you
-are installing as a user the xdg-utils will likely use $HOME/.local in case you
-want to uninstall later.
-
-You may run ./elflibviewer from the build directory or simply run the installed
-one later.
-
-You can open a file to view after running the program, or pass the file name on
+You can open a file to view after running the program, or drag-and-drop it, or pass the file name on
 the command line.
 
 When the program is open, you can type into the search line to highlight

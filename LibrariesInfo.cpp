@@ -222,7 +222,8 @@ void LibrariesInfo::splitPaths(const QStringList &all, QStringList &elf32, QStri
 {
     foreach (const QString &path, all)
     {
-        if (path.contains("i386") || path.endsWith("lib32") || path.endsWith("libx32")) {
+        if (path.contains("i386") || path.contains("i686")
+                || path.endsWith("lib32") || path.endsWith("libx32")) {
             elf32 << path;
         } else if (path.contains("x86_64") || path.endsWith("lib64")) {
             elf64 << path;

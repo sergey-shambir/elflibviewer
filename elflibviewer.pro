@@ -5,7 +5,8 @@ OTHER_FILES += \
     elflibviewer.png \
     elflibviewer.desktop \
     document-open.png \
-    application-exit.png
+    application-exit.png \
+    README.md
 
 HEADERS += \
     MainWindowImpl.h \
