@@ -20,7 +20,7 @@
 #define MAINWINDOWIMPL_H
 
 #include <QMainWindow>
-#include <QtCore/QHash>
+#include <QHash>
 #include "ui_elflibviewer.h"
 
 class QStandardItem;

@@ -1,4 +1,6 @@
 
+greaterThan(QT_VERSION, 4): QT += widgets
+
 OTHER_FILES += \
     README \
     locationbar-erase.png \

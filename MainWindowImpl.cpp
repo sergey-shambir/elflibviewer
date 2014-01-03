@@ -16,13 +16,17 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <QtCore>
-#include <QtGui>
-
 #include "MainWindowImpl.h"
 #include "LibrariesInfo.h"
+#include <QTimer>
+#include <QStandardItemModel>
+#include <QFileInfo>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QDragEnterEvent>
+#include <QMimeData>
 
-const char *versionString = "0.9";
+const char *versionString = "1.0";
 
 class MainWindowImpl::Private
 {

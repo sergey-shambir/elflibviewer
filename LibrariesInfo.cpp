@@ -3,10 +3,7 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QTextStream>
-#include <QDebug>
 #include <QDir>
-
-// TODO: use bool isElf64 to split x64 and i386 library search paths on Debian/Ubuntu.
 
 LibrariesInfo::LibrariesInfo()
     : elfClass(Unknown)
